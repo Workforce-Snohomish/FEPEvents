@@ -166,6 +166,42 @@ function publishToGitHub(content) {
   console.log(`Published events to ${repo}/${path} on ${branch}`)
 }
 
+/**
+ * Run by hand from the editor to find out why publishing fails: logs whether the token is accepted,
+ * whether it can see and write to the repo, and whether the branch exists.
+ */
+function checkGitHubSetup() {
+  const scriptProperties = PropertiesService.getScriptProperties()
+  const token = scriptProperties.getProperty('GITHUB_TOKEN')
+  const repo = scriptProperties.getProperty('GITHUB_REPO')
+  const branch = scriptProperties.getProperty('GITHUB_BRANCH') || 'gh-pages'
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    Accept: 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28'
+  }
+  const get = url => UrlFetchApp.fetch(url, {headers: headers, muteHttpExceptions: true})
+
+  console.log(`GITHUB_REPO is "${repo}", branch is "${branch}", token ${token ? `is set (${token.length} characters)` : 'is NOT set'}`)
+
+  const repoResponse = get(`https://api.github.com/repos/${repo}`)
+  console.log(`Repo lookup: ${repoResponse.getResponseCode()}`)
+  if (repoResponse.getResponseCode() == 401) {
+    console.log('The token itself was rejected: it is mistyped, expired or revoked')
+    return
+  }
+  if (repoResponse.getResponseCode() != 200) {
+    console.log('The token cannot see this repo: check the GITHUB_REPO spelling (owner/name), that the token was created for this owner and repo, and that the organization has approved it')
+    return
+  }
+  const repoDetails = JSON.parse(repoResponse.getContentText())
+  console.log(`Repo found: ${repoDetails.full_name}, ${repoDetails.private ? 'PRIVATE' : 'public'}, default branch ${repoDetails.default_branch}`)
+  console.log(`Token can write contents: ${repoDetails.permissions ? repoDetails.permissions.push : 'unknown'}`)
+
+  const branchResponse = get(`https://api.github.com/repos/${repo}/branches/${encodeURIComponent(branch)}`)
+  console.log(`Branch "${branch}" lookup: ${branchResponse.getResponseCode()}${branchResponse.getResponseCode() == 200 ? ' (exists)' : ' (does not exist yet, it needs to be pushed or created)'}`)
+}
+
 function getEvents() {
   const today = new Date() // date from which to request events
 
