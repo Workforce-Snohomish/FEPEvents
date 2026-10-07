@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+</head>
+
+<body>
+  <div class="fep-events">
+    <div class="event-filters mb-4">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend mr-2">
+          <span class="input-group-text">Filters</span>
+        </div>
+        <div class="btn-group-toggle event-type-selector" data-toggle="buttons">
+          <? uniqueFilters.forEach(function(filter) { ?>
+          <label class="btn btn-secondary" data-selector="<?= filter.cssSelector ?>">
+            <input type="checkbox"><?= filter.buttonText ?>
+        </label>
+          <? }) ?>
+        </div>
+      </div>
+    </div>
+    <? if (data.length > 0) { 
+    data.forEach(function(event) { ?>
+    <div class="card mb-4 event-show <?= event[propertyIndex.cssSelector] ?>">
+      <h4 class="card-header d-flex">
+        <span class="mr-auto"><?= event[propertyIndex.summary] ?></span><span class="ml-3"><?= event[propertyIndex.type] ?></span><span class="ml-3"><?= event[propertyIndex.cost] ?></span>
+      </h4>
+      <div class="card-body">
+        <h5 class="card-title">
+          <?= event[propertyIndex.formattedTime] ?>
+        </h5>
+        <p class="card-text">
+          <?!= event[propertyIndex.description] ?>
+        </p>
+        <? if (event[propertyIndex.eventURL] !== "") { ?>
+        <a href="<?= event[propertyIndex.eventURL] ?>" class="btn btn-primary">Attend</a>
+        <? } ?>
+      </div>
+      <div class="card-footer">
+        Audience:
+        <?= event[propertyIndex.audience] ?>
+      </div>
+    </div>
+    <? })
+
+  } else { ?>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">No Events Scheduled</h5>
+        <h6 class="card-subtitle mb-2 text-muted">N/A</h6>
+        <span>Registration not available</span>
+      </div>
+    </div>
+    <? } ?>
+  </div>
+</body>
+
+</html>

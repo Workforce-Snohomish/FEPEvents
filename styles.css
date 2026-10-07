@@ -1,0 +1,36 @@
+.fep-events > .card:not(.event-show) {
+    display:none;
+}
+.fep-events .btn-secondary:not(:disabled):not(.disabled).active,
+.fep-events .btn-secondary:not(:disabled):not(.disabled):active {
+    background:#058184 !important;
+    border-color:#F7941E !important;
+}
+
+.loader {
+    width: 48px;
+    height: 48px;
+    display: inline-block;
+    position: relative;
+    border: 5px solid;
+    border-color:#058184 #0000 #F7941E #0000;
+    border-radius: 50%;
+    box-sizing: border-box;
+    animation: 1.5s rotate ease-in-out infinite;
+ }
+ .loader:before , .loader:after{
+    content: '';
+    top: 0;
+    left: 0;
+    position: absolute;
+    border: 10px solid transparent;
+    border-bottom-color:#F7941E;
+    transform: translate(-12px, 17px) rotate(-35deg);
+  }
+ .loader:after {
+    border-color: #058184 #0000 #0000 #0000 ;
+    transform: translate(30px, 1px) rotate(-35deg);
+  }
+   @keyframes rotate {
+    100%{    transform: rotate(360deg)}
+  }
